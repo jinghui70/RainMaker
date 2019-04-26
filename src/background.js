@@ -1,10 +1,8 @@
 "use strict";
 
-import { app, protocol, BrowserWindow } from "electron";
-import {
-  createProtocol,
-  installVueDevtools
-} from "vue-cli-plugin-electron-builder/lib";
+import { app, protocol, BrowserWindow, Menu } from "electron";
+import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
+import { appMenuTemplate } from "./menu.js";
 const isDevelopment = process.env.NODE_ENV !== "production";
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -16,7 +14,7 @@ protocol.registerStandardSchemes(["app"], { secure: true });
 function createWindow() {
   if (isDevelopment) {
     BrowserWindow.addDevToolsExtension(
-      "/Users/lijinghui/Library/Application Support/Google/Chrome/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/4.1.5_0"
+      "/Users/lijinghui/Library/Application Support/Google/Chrome/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/5.1.0_0"
     );
   }
   // Create the browser window.
@@ -58,15 +56,8 @@ app.on("activate", () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on("ready", async () => {
-  if (isDevelopment && !process.env.IS_TEST) {
-    // Install Vue Devtools
-    try {
-      //await installVueDevtools();
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error("Vue Devtools failed to install:", e.toString());
-    }
-  }
+  const menu = Menu.buildFromTemplate(appMenuTemplate);
+  Menu.setApplicationMenu(menu);
   createWindow();
 });
 

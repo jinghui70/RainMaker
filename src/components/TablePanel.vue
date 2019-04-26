@@ -1,0 +1,128 @@
+<template>
+  <div class="table-panel">
+    <div class="block table-panel-fields">
+      <block-head :title="`${table.label} - ${table.name}`" :actions="tableActions" />
+      <el-table
+        :data="table.fields || []"
+        height="250"
+        :highlight-current-row="false"
+        border
+        cell-class-name="nopadding"
+        header-cell-class-name="header-cell-class"
+        @selection-change="fieldSelectionChange"
+        ref="fieldsTable"
+      >
+        <el-table-column fixed type="selection" :resizable="false" width="38" />
+        <el-table-column fixed type="index" label="序号" width="50" />
+        <el-table-column prop="code" label="字段名" width="160" />
+        <el-table-column prop="label" label="标题" width="160" />
+        <el-table-column prop="name" label="属性" width="140" />
+        <el-table-column prop="type" label="类型" width="100" />
+        <el-table-column prop="length" label="长度" width="100" />
+        <el-table-column prop="precision" label="精度" width="100" />
+        <el-table-column prop="key" label="主键" width="100" />
+        <el-table-column prop="mandatory" label="非空" width="100" />
+      </el-table>
+    </div>
+    <div style="height:8px" />
+    <div class="table-panel-sub">
+      <div class="block sub">
+        <block-head title="链接属性" />
+        <el-table
+          :data="table.linkFields || []"
+          height="250"
+          :highlight-current-row="false"
+          border
+          cell-class-name="nopadding"
+          header-cell-class-name="header-cell-class"
+        >
+          <el-table-column fixed type="selection" :resizable="false" width="38" />
+          <el-table-column type="index" width="50" />
+          <el-table-column prop="name" label="属性" width="180" />
+          <el-table-column prop="label" label="标题" width="180" />
+        </el-table>
+      </div>
+      <div style="width: 8px;" />
+      <div class="block sub">
+        <block-head title="索引" />
+        <el-table
+          :data="table.indexes || []"
+          height="250"
+          :highlight-current-row="false"
+          border
+          cell-class-name="nopadding"
+          header-cell-class-name="header-cell-class"
+        >
+          <el-table-column fixed type="selection" :resizable="false" width="38" />
+          <el-table-column type="index" width="50" />
+          <el-table-column prop="name" label="属性" width="180" />
+        </el-table>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import BlockHead from "./BlockHead.vue";
+export default {
+  name: "TablePanel",
+  components: { BlockHead },
+  data() {
+    return {
+      fieldSelection: []
+    };
+  },
+  computed: {
+    tableActions() {
+      const disabled = this.fieldSelection.length == 0;
+      return [
+        { id: "newField", title: "新建属性", icon: "el-icon-document-add" },
+        { id: "delField", title: "删除属性", icon: "el-icon-delete", disabled },
+        { id: "newLink", title: "新建链接属性", icon: "el-icon-link", disabled },
+        { id: "newIndex", title: "新建索引", icon: "el-icon-paperclip", disabled }
+      ];
+    },
+    linkActions() {
+      return [{ id: "delLink", title: "删除", icon: "el-icon-delete" }];
+    },
+    indexActions() {
+      return [{ id: "delIndex", title: "删除", icon: "el-icon-delete" }];
+    }
+  },
+  props: {
+    table: Object
+  },
+  methods: {
+    fieldSelectionChange(selection) {
+      this.fieldSelection = selection;
+    }
+  }
+};
+</script>
+
+<style lang="scss">
+.table-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+
+  .table-panel-fields {
+    flex: 1;
+    overflow: scroll;
+  }
+  .table-panel-sub {
+    height: 200px;
+    width: 100%;
+    display: flex;
+    .sub {
+      flex: 1;
+      overflow: hidden;
+    }
+  }
+  .block {
+    display: flex;
+    flex-direction: column;
+  }
+}
+</style>
