@@ -2,6 +2,7 @@ import Vue from "vue";
 import App from "./App.vue";
 import store from "./store/store";
 import "./plugins/element.js";
+import "./plugins/lodash.js";
 import i18n from "./plugins/i18n";
 
 Vue.config.productionTip = false;

@@ -27,7 +27,7 @@ export default {
   },
   methods: {
     actionClick: function(e) {
-      if (!e.disabled) this.$emit("action-click", e);
+      if (!e.disabled) this.$emit("action-click", e.id);
     }
   }
 };

@@ -1,6 +1,6 @@
 <template>
   <div class="item-tree">
-    <el-input class="filter" placeholder="输入关键字进行过滤" v-model="filterText"> </el-input>
+    <el-input class="filter" placeholder="输入关键字进行过滤" v-model="keywords"> </el-input>
     <div class="tree-wrapper">
       <el-tree
         :data="tree"
@@ -21,12 +21,13 @@
 
 <script>
 import { mapState } from "vuex";
-import { ElementType } from "../utils.js";
+import { ElementType, filterNode } from "../utils.js";
 export default {
   name: "ItemTree",
   data() {
     return {
-      filterText: ""
+      keywords: "",
+      filterNode
     };
   },
   props: {
@@ -36,15 +37,11 @@ export default {
     ...mapState(["tree"])
   },
   watch: {
-    filterText(val) {
+    keywords(val) {
       this.$refs.tree.filter(val);
     }
   },
   methods: {
-    filterNode(value, data) {
-      if (!value) return true;
-      return data.label.indexOf(value) !== -1;
-    },
     renderNode(h, { node, data }) {
       let icon = "el-icon-document";
       switch (data.type) {

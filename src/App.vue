@@ -13,8 +13,8 @@ import { ipcRenderer, remote } from "electron";
 import fs from "fs";
 import { ModelReader, ElementType } from "./utils.js";
 import ItemTree from "@/components/ItemTree.vue";
-import UnitPanel from "@/components/UnitPanel.vue";
-import TablePanel from "@/components/TablePanel.vue";
+import UnitPanel from "@/panels/UnitPanel.vue";
+import TablePanel from "@/panels/TablePanel.vue";
 
 export default {
   name: "app",

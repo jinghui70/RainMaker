@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import BlockHead from "./BlockHead.vue";
+import BlockHead from "@/components/BlockHead.vue";
 export default {
   name: "UnitPanel",
   components: { BlockHead },
