@@ -40,7 +40,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row v-for="(field, index) in link.fields" :key="field.name">
+        <el-row v-for="(field, index) in link.fields" :key="field.id">
           <el-col :span="12">
             <el-form-item label="字段">
               <el-input :value="`${field.label}-${field.name}`" readonly />
@@ -51,9 +51,9 @@
               <el-select v-model="link.leftFields[index]" placeholder="请选择">
                 <el-option
                   v-for="item in interTableFields"
-                  :key="item.name"
+                  :key="item.id"
                   :label="`${item.label}-${item.name}`"
-                  :value="item.name"
+                  :value="item.id"
                 />
               </el-select>
             </el-form-item>
@@ -80,9 +80,9 @@
             <el-select v-model="link.rightFields[0]" placeholder="请选择">
               <el-option
                 v-for="item in interTableFields"
-                :key="item.name"
+                :key="item.id"
                 :label="`${item.label}-${item.name}`"
-                :value="item.name"
+                :value="item.id"
               />
             </el-select>
           </el-form-item>
@@ -92,9 +92,9 @@
             <el-select v-model="link.targetFields[0]" placeholder="请选择">
               <el-option
                 v-for="item in targetTableFields"
-                :key="item.name"
+                :key="item.id"
                 :label="`${item.label}-${item.name}`"
-                :value="item.name"
+                :value="item.id"
               />
             </el-select>
           </el-form-item>
@@ -112,10 +112,10 @@
               <el-select v-model="link.targetFields[index]" placeholder="请选择">
                 <el-option
                   v-for="item in targetTableFields"
-                  :key="item.name"
+                  :key="item.id"
                   :value-key="item.name"
                   :label="`${item.label}-${item.name}`"
-                  :value="item"
+                  :value="item.id"
                 />
               </el-select>
             </el-form-item>
@@ -131,7 +131,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters, mapMutations } from "vuex";
 import { filterNode } from "@/utils.js";
 import ElTreeSelect from "@/components/ElTreeSelect.vue";
 import { ElementType } from "../utils";
@@ -171,42 +171,50 @@ export default {
     }
   },
   computed: {
-    ...mapState(["tree"]),
+    ...mapState(["model"]),
+    ...mapGetters(["tree"]),
     interTable: {
       get() {
-        return this.link.interTable;
+        return this.model.tables[this.link.interTable];
       },
       set(value) {
-        this.link.interTable = value;
+        this.link.interTable = value.id;
         this.link.leftFields = [];
         this.link.rightFields = [];
       }
     },
     targetTable: {
       get() {
-        return this.link.targetTable;
+        return this.model.tables[this.link.targetTable];
       },
       set(value) {
-        this.link.targetTable = value;
+        this.link.targetTable = value.id;
         this.link.targetFields = [];
       }
     },
     interTableFields() {
-      return this.link.interTable ? this.link.interTable.fields : [];
+      if (this.link.interTable) {
+        const table = this.model.tables[this.link.interTable];
+        return table.fields;
+      } else return [];
     },
     targetTableFields() {
-      return this.link.targetTable ? this.link.targetTable.fields : [];
+      if (this.link.targetTable) {
+        const table = this.model.tables[this.link.targetTable];
+        return table.fields;
+      } else return [];
     }
   },
   methods: {
+    ...mapMutations(["setChanged"]),
     newLink(table, fields) {
       this.title = "新建链接属性";
       this.oldLink = null;
       this.table = table;
       this.link.fields = fields;
       if (this.link.fields.length == 1) {
-        this.link.name = this.link.fields[0].name;
-        this.link.label = this.link.fields[0].label;
+        this.link.name = fields[0].name;
+        this.link.label = fields[0].label;
       }
       this.link.many = false;
       this.hasInterTable = false;
@@ -221,7 +229,7 @@ export default {
       this.title = "编辑链接属性";
       this.oldLink = link;
       this.table = table;
-      this.link.fields = [...link.fields];
+      this.link.fields = link.fields.map(f => this.model.fieldId2Field(table, f));
       this.link.name = link.name;
       this.link.label = link.label;
       this.link.many = link.many;
@@ -259,6 +267,7 @@ export default {
         delete link.rightFields;
       }
       this.$refs.form.resetFields();
+      this.setChanged(true);
       this.visible = false;
     }
   }

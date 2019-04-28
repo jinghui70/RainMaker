@@ -1,23 +1,29 @@
 import Vue from "vue";
 import Vuex from "vuex";
-
+import { ModelObject } from "../model.js";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    fileName: "",
+    fileName: null,
     changed: false,
-    model: {},
-    tree: [],
-    openedItems: []
+    model: new ModelObject()
   },
-  getters: {},
   mutations: {
-    loadFile(state, payload) {
-      state.fileName = payload.fileName;
+    setFileName(state, fileName) {
+      state.fileName = fileName;
+    },
+    setModel(state, model) {
+      state.model = model;
       state.changed = false;
-      state.openedItems = [];
-      state.tree = payload.content.tree;
+    },
+    setChanged(state, changed) {
+      state.changed = changed;
+    }
+  },
+  getters: {
+    tree(state) {
+      return [state.model.root];
     }
   },
   actions: {}

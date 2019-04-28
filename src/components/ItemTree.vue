@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapGetters } from "vuex";
 import { ElementType, filterNode } from "../utils.js";
 export default {
   name: "ItemTree",
@@ -34,7 +34,7 @@ export default {
     treeNodeChange: Function
   },
   computed: {
-    ...mapState(["tree"])
+    ...mapGetters(["tree"])
   },
   watch: {
     keywords(val) {

@@ -11,10 +11,12 @@
 <script>
 import { ipcRenderer, remote } from "electron";
 import fs from "fs";
-import { ModelReader, ElementType } from "./utils.js";
+import { ElementType } from "./utils.js";
+import { ModelObject } from "./model.js";
 import ItemTree from "@/components/ItemTree.vue";
 import UnitPanel from "@/panels/UnitPanel.vue";
 import TablePanel from "@/panels/TablePanel.vue";
+import { mapState, mapMutations } from "vuex";
 
 export default {
   name: "app",
@@ -25,6 +27,7 @@ export default {
     };
   },
   computed: {
+    ...mapState(["changed", "fileName", "model"]),
     selectTable() {
       if (!this.selectObject) return null;
       return this.selectObject.type == ElementType.TABLE ? this.selectObject : null;
@@ -36,18 +39,28 @@ export default {
   },
   created() {
     ipcRenderer.on("action", (event, arg) => {
-      switch (arg) {
-        case "open":
-          this.open();
-          break;
-      }
+      if (this._.isFunction(this[arg])) this[arg]();
     });
   },
   methods: {
+    ...mapMutations(["setFileName", "setModel", "setChanged"]),
     treeNodeChange(data) {
       this.selectObject = data;
     },
-    askSaveIfNeed() {},
+    askSaveIfNeed() {
+      if (!this.changed) return;
+      const response = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+        message: "文件已被改变，需要保存吗？",
+        type: "请问",
+        buttons: ["保存", "不用"]
+      });
+      if (response == 0) this.save(); //点击Yes按钮后保存当前文档
+    },
+    newFile() {
+      this.askSaveIfNeed();
+      this.setModel(new ModelObject());
+      this.setFileName(null);
+    },
     open() {
       this.askSaveIfNeed();
       let files = remote.dialog.showOpenDialog(remote.getCurrentWindow(), {
@@ -58,8 +71,10 @@ export default {
       const fileName = files[0];
       try {
         const content = fs.readFileSync(fileName, "utf8");
-        const reader = new ModelReader(JSON.parse(content));
-        this.$store.commit("loadFile", { fileName, content: reader });
+        const model = new ModelObject();
+        model.loadFromFile(JSON.parse(content));
+        this.setFileName(fileName);
+        this.setModel(model);
       } catch (e) {
         this.$message({
           showClose: true,
@@ -67,6 +82,24 @@ export default {
           type: "error"
         });
       }
+    },
+    save() {
+      if (this.fileName == null) this.saveAs();
+      else this.doSave(this.fileName);
+    },
+    saveAs() {
+      const file = remote.dialog.showSaveDialog(remote.getCurrentWindow(), {
+        filters: [{ name: "Rainbow Data Model Files", extensions: ["rdmx"] }, { name: "All Files", extensions: ["*"] }]
+      });
+      if (file) {
+        this.doSave(file);
+        this.setFileName(file);
+      }
+    },
+    doSave(file) {
+      const obj = this.model.toFileObject();
+      fs.writeFileSync(file, JSON.stringify(obj, null, 4));
+      this.setChanged(false);
     }
   }
 };
