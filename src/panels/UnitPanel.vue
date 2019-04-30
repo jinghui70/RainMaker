@@ -1,6 +1,6 @@
 <template>
   <div class="unit-panel">
-    <block-head :title="unit.label" :actions="actions" @action-click="actionClick" />
+    <block-head :title="unit.label" :actions="actions" @action-click="actionClick" title-action="editUnit" />
     <div class="unit-panel-table">
       <el-table
         :data="tables"
@@ -58,6 +58,9 @@ export default {
     },
     actionClick(action) {
       this[action]();
+    },
+    editUnit() {
+      if (this.unit.type == ElementType.UNIT) this.app.$refs.unitDialog.editUnit(this.unit);
     },
     newTable() {
       this.app.$refs.tableDialog.newTable(this.unit);

@@ -1,11 +1,12 @@
 <template>
   <div id="app">
-    <item-tree v-model="selectObject" />
+    <item-tree-panel v-model="selectObject" />
     <div class="panel">
       <unit-panel v-if="selectUnit" :unit="selectUnit" />
       <table-panel v-if="selectTable" :table="selectTable" />
     </div>
     <table-dialog ref="tableDialog" />
+    <unit-dialog ref="unitDialog" />
   </div>
 </template>
 
@@ -14,15 +15,16 @@ import { ipcRenderer, remote } from "electron";
 import fs from "fs";
 import { ElementType } from "./utils.js";
 import { ModelObject } from "./model.js";
-import ItemTree from "@/components/ItemTree.vue";
+import ItemTreePanel from "@/panels/ItemTreePanel.vue";
 import UnitPanel from "@/panels/UnitPanel.vue";
 import TablePanel from "@/panels/TablePanel.vue";
 import TableDialog from "@/dialogs/TableDialog.vue";
+import UnitDialog from "@/dialogs/UnitDialog.vue";
 import { mapState, mapMutations } from "vuex";
 
 export default {
   name: "app",
-  components: { ItemTree, UnitPanel, TablePanel, TableDialog },
+  components: { ItemTreePanel, UnitPanel, TablePanel, TableDialog, UnitDialog },
   data() {
     return {
       selectObject: null
@@ -134,7 +136,7 @@ body {
   display: flex;
   background-color: #333333;
   .item-tree {
-    min-width: 250px;
+    min-width: 280px;
   }
   .panel {
     flex: 1;

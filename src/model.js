@@ -18,15 +18,15 @@ export class ModelObject {
   }
 
   loadFromFile(file) {
-    this.root = this.loadUnit(file);
+    this.root = this.loadUnit(file, null);
     this.root.label = file.label;
     this.root.type = ElementType.MODEL;
     this.model = _.pick(file, ["label", "name", "comment", "tableTags", "fieldTags"]);
     this.loadLink();
   }
 
-  loadUnit(unit) {
-    let result = { id: uuid(), type: ElementType.UNIT, label: unit.label };
+  loadUnit(unit, parent) {
+    let result = { id: uuid(), type: ElementType.UNIT, label: unit.label, parent };
     result.children = [];
     if (_.isArray(unit.tables)) {
       // 处理每个表，加ID
@@ -47,7 +47,7 @@ export class ModelObject {
     }
     if (_.isArray(unit.units)) {
       unit.units.forEach(unit => {
-        result.children.push(this.loadUnit(unit));
+        result.children.push(this.loadUnit(unit, result));
       });
     }
     return result;

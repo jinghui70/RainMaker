@@ -1,10 +1,12 @@
 <template>
-  <div class="item-tree">
+  <div class="item-tree-panel">
     <el-input class="filter" placeholder="输入关键字进行过滤" v-model="keywords" />
-    <div class="item-tree-actions">
-      <el-button type="text" icon="el-icon-plus" size="mini">新建包</el-button>
-      <el-button type="text" icon="el-icon-delete" size="mini" :disabled="!value || value.type == 1">删除包</el-button>
-      <el-button type="text" icon="el-icon-folder-remove" size="mini">收起</el-button>
+    <div class="item-tree-panel-panel-actions">
+      <el-button type="text" icon="el-icon-plus" size="mini" :disabled="!value" @click="newUnit">新建包</el-button>
+      <el-button type="text" icon="el-icon-delete" size="mini" :disabled="delDisabled" @click="delUnit"
+        >删除包
+      </el-button>
+      <el-button type="text" icon="el-icon-folder-remove" size="mini">全部收起</el-button>
     </div>
     <div class="tree-wrapper">
       <el-tree
@@ -30,7 +32,7 @@ import { mapGetters } from "vuex";
 import { ElementType, filterNode } from "../utils.js";
 
 export default {
-  name: "ItemTree",
+  name: "ItemTreePanel",
   data() {
     return {
       keywords: "",
@@ -38,11 +40,18 @@ export default {
       oldTable: null
     };
   },
+  inject: ["app"],
   props: {
     value: Object
   },
   computed: {
-    ...mapGetters(["tree"])
+    ...mapGetters(["tree"]),
+    delDisabled() {
+      if (!this.value) return true;
+      if (this.value.type != ElementType.UNIT) return true;
+      if (this.value.children && this.value.children.length > 0) return true;
+      return false;
+    }
   },
   watch: {
     keywords(val) {
@@ -89,13 +98,21 @@ export default {
     },
     actionClick(action) {
       this[action]();
+    },
+    newUnit() {
+      const parent = this.value.type == ElementType.TABLE ? this.value.unit : this.value;
+      this.app.$refs.unitDialog.newUnit(parent);
+    },
+    delUnit() {
+      let inx = this.value.parent.children.indexOf(this.value);
+      this.value.parent.children.splice(inx, 1);
     }
   }
 };
 </script>
 
 <style lang="scss">
-.item-tree {
+.item-tree-panel {
   display: flex;
   flex-direction: column;
 
@@ -107,7 +124,7 @@ export default {
       color: #8b8b8b;
     }
   }
-  .item-tree-actions {
+  .item-tree-panel-actions {
     background-color: #252526;
     height: 30px;
     display: flex;
