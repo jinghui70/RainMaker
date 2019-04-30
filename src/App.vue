@@ -162,11 +162,14 @@ body {
   .el-table tr {
     background-color: #252526;
     color: #8b8b8b;
-    &:hover,
-    .hover-row {
-      & > td {
-        background-color: #333333;
-        color: white;
+
+    :not(.current-row) {
+      &:hover,
+      &.hover-row {
+        & > td {
+          background-color: #333333;
+          color: white;
+        }
       }
     }
   }
