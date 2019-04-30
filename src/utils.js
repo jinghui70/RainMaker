@@ -30,3 +30,63 @@ export const DataType = [
   "CLOB",
   "BLOB"
 ];
+
+export const TagType = Object.freeze({
+  FLAG: "FLAG",
+  STRING: "STRING",
+  LIST: "LIST",
+  TABLE: "TABLE",
+  FIELD: "FIELD"
+});
+
+const newTableTag = function(model) {
+  if (_.isEmpty(model.tableTags)) return null;
+  let result = {};
+  model.tableTags.forEach(tag => {
+    if (tag.type == TagType.FLAG) result[tag.name] = false;
+    else result[tag.name] = null;
+  });
+  return result;
+};
+
+export function newTable(model) {
+  return {
+    id: uuid(),
+    type: ElementType.TABLE,
+    name: "",
+    code: "",
+    label: "",
+    comment: "",
+    fields: [],
+    linkFields: [],
+    indexes: [],
+    tags: newTableTag(model)
+  };
+}
+
+export function newField() {
+  return {
+    id: uuid(),
+    name: "new",
+    code: "NEW",
+    label: "新属性",
+    comment: "",
+    tags: {}
+  };
+}
+
+export function newLink(fields) {
+  let name = fields.length == 1 ? fields[0].name : "";
+  let label = fields.length == 1 ? fields[0].label : "";
+  return {
+    name,
+    label,
+    fields: [...fields],
+    many: false,
+    interTable: null,
+    leftFields: [],
+    rightFields: [],
+    targetTable: null,
+    targetFields: []
+  };
+}

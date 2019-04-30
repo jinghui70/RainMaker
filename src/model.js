@@ -10,7 +10,9 @@ export class ModelObject {
     };
     this.model = {
       label: "新文件",
-      name: "NEW"
+      name: "NEW",
+      tableTags: [],
+      fieldTags: []
     };
     this.tables = {}; // 花名册
   }

@@ -1,10 +1,11 @@
 <template>
   <div id="app">
-    <item-tree :treeNodeChange="treeNodeChange" />
+    <item-tree v-model="selectObject" />
     <div class="panel">
       <unit-panel v-if="selectUnit" :unit="selectUnit" />
       <table-panel v-if="selectTable" :table="selectTable" />
     </div>
+    <table-dialog ref="tableDialog" />
   </div>
 </template>
 
@@ -16,25 +17,29 @@ import { ModelObject } from "./model.js";
 import ItemTree from "@/components/ItemTree.vue";
 import UnitPanel from "@/panels/UnitPanel.vue";
 import TablePanel from "@/panels/TablePanel.vue";
+import TableDialog from "@/dialogs/TableDialog.vue";
 import { mapState, mapMutations } from "vuex";
 
 export default {
   name: "app",
-  components: { ItemTree, UnitPanel, TablePanel },
+  components: { ItemTree, UnitPanel, TablePanel, TableDialog },
   data() {
     return {
       selectObject: null
     };
   },
+  provide() {
+    return { app: this };
+  },
   computed: {
-    ...mapState(["changed", "fileName", "model"]),
+    ...mapState(["changed", "fileName", "world"]),
     selectTable() {
       if (!this.selectObject) return null;
       return this.selectObject.type == ElementType.TABLE ? this.selectObject : null;
     },
     selectUnit() {
       if (!this.selectObject) return null;
-      return this.selectObject.type == ElementType.UNIT ? this.selectObject : null;
+      return this.selectObject.type == ElementType.TABLE ? null : this.selectObject;
     }
   },
   created() {
@@ -42,23 +47,26 @@ export default {
       if (this._.isFunction(this[arg])) this[arg]();
     });
   },
+  watch: {
+    world(newValue) {
+      this.selectObject = newValue.root;
+    }
+  },
   methods: {
-    ...mapMutations(["setFileName", "setModel", "setChanged"]),
-    treeNodeChange(data) {
-      this.selectObject = data;
-    },
+    ...mapMutations(["setFileName", "setWorld", "setChanged"]),
     askSaveIfNeed() {
       if (!this.changed) return;
       const response = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
         message: "文件已被改变，需要保存吗？",
-        type: "请问",
-        buttons: ["保存", "不用"]
+        type: "question",
+        buttons: ["要", "不存"]
       });
       if (response == 0) this.save(); //点击Yes按钮后保存当前文档
     },
     newFile() {
       this.askSaveIfNeed();
-      this.setModel(new ModelObject());
+      const model = new ModelObject();
+      this.setWorld(model);
       this.setFileName(null);
     },
     open() {
@@ -71,10 +79,10 @@ export default {
       const fileName = files[0];
       try {
         const content = fs.readFileSync(fileName, "utf8");
-        const model = new ModelObject();
-        model.loadFromFile(JSON.parse(content));
+        const world = new ModelObject();
+        world.loadFromFile(JSON.parse(content));
         this.setFileName(fileName);
-        this.setModel(model);
+        this.setWorld(world);
       } catch (e) {
         this.$message({
           showClose: true,
@@ -97,7 +105,7 @@ export default {
       }
     },
     doSave(file) {
-      const obj = this.model.toFileObject();
+      const obj = this.world.toFileObject();
       fs.writeFileSync(file, JSON.stringify(obj, null, 4));
       this.setChanged(false);
     }

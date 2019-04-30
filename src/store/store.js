@@ -7,14 +7,14 @@ export default new Vuex.Store({
   state: {
     fileName: null,
     changed: false,
-    model: new ModelObject()
+    world: new ModelObject()
   },
   mutations: {
     setFileName(state, fileName) {
       state.fileName = fileName;
     },
-    setModel(state, model) {
-      state.model = model;
+    setWorld(state, world) {
+      state.world = world;
       state.changed = false;
     },
     setChanged(state, changed) {
@@ -22,8 +22,35 @@ export default new Vuex.Store({
     }
   },
   getters: {
+    model(state) {
+      return state.world.model;
+    },
     tree(state) {
-      return [state.model.root];
+      return [state.world.root];
+    },
+    tableTags(state, getters) {
+      return getters.model.tableTags;
+    },
+    fieldTags(state, getters) {
+      return getters.model.fieldTags;
+    },
+    tableMap(state) {
+      return state.world.tables;
+    },
+    getTable(state) {
+      return function(id) {
+        return state.world.tables[id];
+      };
+    },
+    getFields(state) {
+      return function(table, fields) {
+        return fields.map(f => state.world.fieldId2Field(table, f));
+      };
+    },
+    getFieldsLabel(state) {
+      return function(table, fields) {
+        return fields.map(f => state.world.fieldId2FieldName(table, f)).join(",");
+      };
     }
   },
   actions: {}

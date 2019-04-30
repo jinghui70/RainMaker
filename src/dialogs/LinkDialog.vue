@@ -131,10 +131,10 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 import { filterNode } from "@/utils.js";
 import ElTreeSelect from "@/components/ElTreeSelect.vue";
-import { ElementType } from "../utils";
+import { ElementType, newLink } from "../utils";
 
 export default {
   name: "LinkDialog",
@@ -146,17 +146,7 @@ export default {
       hasInterTable: false,
       table: null,
       oldLink: null,
-      link: {
-        name: "",
-        label: "",
-        many: false,
-        fields: [],
-        interTable: null,
-        leftFields: [],
-        rightFields: [],
-        targetTable: null,
-        targetFields: []
-      },
+      link: newLink([]),
       filterNode,
       rules: {
         name: [{ required: true, message: "请输入属性名称", trigger: "blur" }],
@@ -171,11 +161,10 @@ export default {
     }
   },
   computed: {
-    ...mapState(["model"]),
-    ...mapGetters(["tree"]),
+    ...mapGetters(["tree", "getTable", "getFields"]),
     interTable: {
       get() {
-        return this.model.tables[this.link.interTable];
+        return this.getTable(this.link.interTable);
       },
       set(value) {
         this.link.interTable = value.id;
@@ -185,7 +174,7 @@ export default {
     },
     targetTable: {
       get() {
-        return this.model.tables[this.link.targetTable];
+        return this.getTable(this.link.targetTable);
       },
       set(value) {
         this.link.targetTable = value.id;
@@ -194,14 +183,12 @@ export default {
     },
     interTableFields() {
       if (this.link.interTable) {
-        const table = this.model.tables[this.link.interTable];
-        return table.fields;
+        return this.interTable.fields;
       } else return [];
     },
     targetTableFields() {
       if (this.link.targetTable) {
-        const table = this.model.tables[this.link.targetTable];
-        return table.fields;
+        return this.targetTable.fields;
       } else return [];
     }
   },
@@ -209,27 +196,17 @@ export default {
     ...mapMutations(["setChanged"]),
     newLink(table, fields) {
       this.title = "新建链接属性";
-      this.oldLink = null;
       this.table = table;
-      this.link.fields = fields;
-      if (this.link.fields.length == 1) {
-        this.link.name = fields[0].name;
-        this.link.label = fields[0].label;
-      }
-      this.link.many = false;
+      this.oldLink = null;
+      this.link = newLink(fields);
       this.hasInterTable = false;
-      this.link.interTable = null;
-      this.link.leftFields = [];
-      this.link.rightFields = [];
-      this.link.targetTable = null;
-      this.link.targetFields = [];
       this.visible = true;
     },
     editLink(table, link) {
       this.title = "编辑链接属性";
       this.oldLink = link;
       this.table = table;
-      this.link.fields = link.fields.map(f => this.model.fieldId2Field(table, f));
+      this.link.fields = this.getFields(table, link.fields);
       this.link.name = link.name;
       this.link.label = link.label;
       this.link.many = link.many;
@@ -255,12 +232,14 @@ export default {
       });
     },
     doSave() {
+      if (!this.table.linkFields) this.$set(this.table, "linkFields", []);
       let link = this.oldLink;
       if (this.oldLink == null) {
         link = {};
         this.table.linkFields.push(link);
       }
       this._.assign(link, this.link);
+      link.fields = link.fields.map(f => f.id);
       if (!this.hasInterTable) {
         delete link.interTable;
         delete link.leftFields;

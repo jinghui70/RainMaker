@@ -1,13 +1,15 @@
 <template>
   <div class="block-head">
-    <span class="block-head__title">{{ title }}</span>
+    <span class="block-head__title" :class="{ action: !!titleAction }" @click="actionClick(titleAction)">
+      {{ title }}
+    </span>
     <div class="block-head__actions">
       <template v-for="action in actions">
         <span
           class="block-head__actionBtn"
           :class="{ disabled: action.disabled }"
           :key="action.id"
-          @click="actionClick(action)"
+          @click="actionClick(action.id)"
         >
           <template v-if="action.icon">
             <i slot="icon" :class="action.icon" />
@@ -23,11 +25,12 @@ export default {
   name: "BlockHead",
   props: {
     title: String,
+    titleAction: String,
     actions: Array
   },
   methods: {
     actionClick: function(e) {
-      if (!e.disabled) this.$emit("action-click", e.id);
+      if (e && !e.disabled) this.$emit("action-click", e);
     }
   }
 };
@@ -45,6 +48,10 @@ export default {
   color: #8b8b8b;
   font-weight: bold;
   margin-left: 10px;
+  user-select: none;
+  &.action:hover {
+    cursor: pointer;
+  }
 }
 
 .block-head__actions {
