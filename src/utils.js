@@ -90,3 +90,8 @@ export function newLink(fields) {
     targetFields: []
   };
 }
+
+export function swapArray(arr, index1, index2) {
+  arr[index1] = arr.splice(index2, 1, arr[index1])[0];
+  return arr;
+}
