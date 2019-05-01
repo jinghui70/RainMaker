@@ -19,20 +19,25 @@
       >
         <el-table-column fixed type="selection" :resizable="false" width="38" />
         <el-table-column fixed type="index" label="序号" width="50" />
+        <el-table-column label="标签" width="58">
+          <template slot-scope="scope">
+            <el-tag v-for="tag in Object.keys(scope.row.tags)" size="mini" :key="tag">{{ tag }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="label" label="显示标题" width="160" />
+        <el-table-column prop="name" label="属性名" width="140" />
         <el-table-column prop="code" label="字段名" width="160" />
-        <el-table-column prop="label" label="标题" width="160" />
-        <el-table-column prop="name" label="属性" width="140" />
         <el-table-column prop="type" label="类型" width="100" />
         <el-table-column prop="length" label="长度" width="100" />
         <el-table-column prop="precision" label="精度" width="100" />
         <el-table-column prop="key" label="主键" width="49">
           <template slot-scope="scope">
-            <i class="el-icon-success" v-if="scope.row.key" />
+            <el-tag size="mini" type="success" v-if="scope.row.key">是</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="mandatory" label="非空" width="49">
           <template slot-scope="scope">
-            <i class="el-icon-success" v-if="scope.row.mandatory" />
+            <el-tag size="mini" type="danger" v-if="scope.row.mandatory">是</el-tag>
           </template>
         </el-table-column>
       </el-table>

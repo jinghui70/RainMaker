@@ -118,6 +118,9 @@ export default {
         message: "文件保存成功",
         type: "success"
       });
+    },
+    close() {
+      this.askSaveIfNeed();
     }
   }
 };

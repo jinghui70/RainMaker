@@ -1,24 +1,15 @@
 <template>
   <el-dialog :title="title" width="500px" :visible.sync="visible">
     <el-form :model="table" :rules="rules" label-width="90px" size="mini" ref="form">
-      <el-form-item label="实体对象名">
-        <el-input v-model="table.name"></el-input>
-      </el-form-item>
       <el-form-item label="显示标题">
         <el-input v-model="table.label"></el-input>
+      </el-form-item>
+      <el-form-item label="实体对象名">
+        <el-input v-model="table.name"></el-input>
       </el-form-item>
       <el-form-item label="数据库表名">
         <el-input v-model="table.code"></el-input>
       </el-form-item>
-      <el-row>
-        <template v-for="tag in tableTags">
-          <el-col :span="8" v-if="tag.type == 'FLAG'" :key="tag.name">
-            <el-form-item :label="tag.name">
-              <el-switch v-model="table.tags[tag.name]" />
-            </el-form-item>
-          </el-col>
-        </template>
-      </el-row>
       <el-row>
         <template v-for="tag in tableTags">
           <el-col :span="12" :key="tag.name">

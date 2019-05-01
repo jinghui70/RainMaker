@@ -71,7 +71,7 @@ export function newField() {
     code: "NEW",
     label: "新属性",
     type: "VARCHAR",
-    length: 22,
+    length: 0,
     precision: 0,
     comment: "",
     tags: {}

@@ -37,6 +37,10 @@ export var appMenuTemplate = [
             window.webContents.send("action", "saveAs");
           }
         }
+      },
+      {
+        label: "退出",
+        role: "quit"
       }
     ]
   },

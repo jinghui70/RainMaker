@@ -75,7 +75,6 @@ export default {
           icon = node.expanded ? "el-icon-folder-opened" : "el-icon-folder";
           break;
         default:
-          label = `${data.label}-${data.name}`;
           break;
       }
       return (

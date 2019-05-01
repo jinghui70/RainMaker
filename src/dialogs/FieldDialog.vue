@@ -14,13 +14,14 @@
         highlight-current-row
         cell-class-name="nopadding"
         header-cell-class-name="header-cell-class"
+        :current-row-key="field.id"
         @current-change="fieldChange"
         ref="fieldList"
       >
         <el-table-column type="index" label="序号" width="50" />
         <el-table-column label="属性">
           <template slot-scope="scope">
-            <span>{{ scope.row.label }}-{{ scope.row.name }}</span>
+            <span>{{ scope.row.label }}</span>
           </template>
         </el-table-column>
       </el-table>
@@ -28,13 +29,13 @@
     <el-form class="field-form" :model="field" label-width="90px" size="mini">
       <el-row>
         <el-col :span="12">
-          <el-form-item label="属性名">
-            <el-input v-model="field.name"></el-input>
+          <el-form-item label="显示标题">
+            <el-input v-model="field.label"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="显示标题">
-            <el-input v-model="field.label"></el-input>
+          <el-form-item label="属性名">
+            <el-input v-model="field.name"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -144,20 +145,15 @@ export default {
     ...mapMutations(["setChanged"]),
     open(table) {
       this.table = table;
-      if (!table.fields) this.fields = [newField()];
+      if (!table.fields) table.fields = [newField()];
       this.fields = table.fields;
-      if (this.fields.length == 0) {
-        this.fields.push(newField());
-      }
       this.field = this.fields[0];
       this.title = `编辑属性-${table.label}`;
       this.visible = true;
-      this.$nextTick(() => {
-        this.$refs.fieldList.setCurrentRow(this.field);
-      });
     },
     fieldChange(row) {
-      this.field = row;
+      if (row) this.field = row;
+      else this.field = { tags: {} };
     },
     addField() {
       let field = newField();

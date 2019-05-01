@@ -13,9 +13,14 @@
       >
         <el-table-column fixed type="selection" :resizable="false" width="38" />
         <el-table-column fixed type="index" label="序号" width="50" />
-        <el-table-column prop="code" label="数据表名" width="160" />
         <el-table-column prop="label" label="标题" width="160" />
         <el-table-column prop="name" label="实体对象名" width="140" />
+        <el-table-column label="标签" width="140">
+          <template slot-scope="scope">
+            <el-tag v-for="tag in Object.keys(scope.row.tags)" size="mini" :key="tag">{{ tag }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="code" label="数据表名" width="160" />
       </el-table>
     </div>
   </div>

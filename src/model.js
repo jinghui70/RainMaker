@@ -35,8 +35,13 @@ export class ModelObject {
         this.tables[table.id] = table;
         table.unit = result;
         table.type = ElementType.TABLE;
+        if (table.tags == null) table.tags = {};
         // 字段加ID
-        if (_.isArray(table.fields)) table.fields.forEach(f => (f.id = uuid()));
+        if (_.isArray(table.fields))
+          table.fields.forEach(f => {
+            f.id = uuid();
+            if (!f.tags) f.tags = {};
+          });
         if (_.isArray(table.indexes)) {
           table.indexes.forEach(i => {
             if (_.isArray(i.fields)) i.fields = i.fields.map(f => this.fieldName2Id(table, f));
