@@ -11,8 +11,8 @@ export class ModelObject {
     this.model = {
       label: "新文件",
       name: "NEW",
-      tableTags: [{ name: "测试", type: "STRING" }],
-      fieldTags: [{ name: "测试", type: "STRING" }]
+      tableTags: [],
+      fieldTags: []
     };
     this.tables = {}; // 花名册
   }
