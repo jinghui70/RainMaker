@@ -19,6 +19,18 @@
           </el-col>
         </template>
       </el-row>
+      <el-row>
+        <template v-for="tag in tableTags">
+          <el-col :span="12" :key="tag.name">
+            <el-form-item :label="tag.name" :class="{ ['extra-input']: tag.type != 'FLAG' && tagStatus[tag.name] }">
+              <el-switch v-model="tagStatus[tag.name]" @input="e => setTagStatus(tag, e)" />
+              <template v-if="tag.type == 'STRING'">
+                <el-input v-if="tagStatus[tag.name]" v-model="table.tags[tag.name]" />
+              </template>
+            </el-form-item>
+          </el-col>
+        </template>
+      </el-row>
       <el-form-item label="描述">
         <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="table.comment" />
       </el-form-item>
@@ -43,6 +55,7 @@ export default {
       unit: null,
       table: { tags: [] },
       oldTable: null,
+      tagStatus: {},
       rules: {
         name: [{ required: true, message: "请输入名称", trigger: "blur" }],
         label: [{ required: true, message: "请输入显示标题", trigger: "blur" }],
@@ -61,13 +74,21 @@ export default {
       this.title = "新建数据表";
       this.oldTable = null;
       this.table = newTable(this.model);
+      this.tagStatus = {};
       this.visible = true;
     },
     editTable(table) {
+      if (table.tags == null) table.tags = {};
       this.title = "编辑数据表";
       this.oldTable = table;
       this.table = this._.cloneDeep(table);
-      if (this.table.tags == null) this.table.tags = {};
+      let tagStatus = {};
+      if (this.tableTags) {
+        this.tableTags.forEach(tag => {
+          tagStatus[tag.name] = this._.has(table.tags, tag.name);
+        });
+      }
+      this.tagStatus = tagStatus;
       this.visible = true;
     },
     save() {
@@ -115,6 +136,17 @@ export default {
         let inx = this.table.fields.findIndex(f => f.name == field.name);
         if (inx >= 0) this.table.fields.splice(inx, 1);
       });
+    },
+    setTagStatus(tag, enabled) {
+      if (enabled) {
+        switch (tag.type) {
+          case TagType.FLAG:
+            this.$set(this.table.tags, tag.name, true);
+            break;
+          default:
+            this.$set(this.table.tags, tag.name, "");
+        }
+      } else this.table.tags = this._.omit(this.table.tags, [tag.name]);
     }
   }
 };
@@ -123,5 +155,12 @@ export default {
 <style lang="scss">
 .el-select {
   display: block !important;
+}
+.extra-input > div {
+  display: flex;
+  align-items: center;
+  .el-switch {
+    margin-right: 5px;
+  }
 }
 </style>

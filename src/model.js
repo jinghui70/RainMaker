@@ -11,8 +11,8 @@ export class ModelObject {
     this.model = {
       label: "新文件",
       name: "NEW",
-      tableTags: [],
-      fieldTags: []
+      tableTags: [{ name: "测试", type: "STRING" }],
+      fieldTags: [{ name: "测试", type: "STRING" }]
     };
     this.tables = {}; // 花名册
   }
@@ -116,14 +116,18 @@ export class ModelObject {
   }
 
   saveUnit(unit) {
-    let result = { label: unit.label, tables: [], units: [] };
+    let tables = [];
+    let units = [];
     unit.children.forEach(child => {
       if (child.type == ElementType.TABLE) {
-        result.tables.push(this.saveTable(child));
+        tables.push(this.saveTable(child));
       } else {
-        result.units.push(this.saveUnit(child));
+        units.push(this.saveUnit(child));
       }
     });
+    let result = { label: unit.label };
+    if (tables.length > 0) result.tables = tables;
+    if (units.length > 0) result.units = tables;
     return result;
   }
 

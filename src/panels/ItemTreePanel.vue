@@ -6,7 +6,6 @@
       <el-button type="text" icon="el-icon-delete" size="mini" :disabled="delDisabled" @click="delUnit"
         >删除包
       </el-button>
-      <el-button type="text" icon="el-icon-folder-remove" size="mini">全部收起</el-button>
     </div>
     <div class="tree-wrapper">
       <el-tree
@@ -29,7 +28,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapMutations, mapGetters } from "vuex";
 import { ElementType, filterNode } from "../utils.js";
 
 export default {
@@ -63,6 +62,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(["setChanged"]),
     renderNode(h, { node, data }) {
       let icon = "el-icon-document";
       let label = data.label;
@@ -111,6 +111,7 @@ export default {
           dragData.unit = dropData;
         }
       }
+      this.setChanged(true);
       this.$refs.tree.setCurrentKey(dragData.id);
       this.$emit("input", dragData);
     },

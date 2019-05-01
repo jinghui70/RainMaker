@@ -105,6 +105,7 @@ export default {
     return {
       visible: false,
       title: "",
+      table: null,
       fields: [],
       field: {},
       tagStatus: {},
@@ -130,16 +131,20 @@ export default {
   watch: {
     field(newValue) {
       if (!newValue.tags) this.$set(newValue, "tags", {});
+      let tagStatus = {};
       if (this.fieldTags) {
         this.fieldTags.forEach(tag => {
-          this.tagStatus[tag.name] = this._.has(newValue.tags, tag.name);
+          tagStatus[tag.name] = this._.has(newValue.tags, tag.name);
         });
       }
+      this.tagStatus = tagStatus;
     }
   },
   methods: {
     ...mapMutations(["setChanged"]),
     open(table) {
+      this.table = table;
+      if (!table.fields) this.fields = [newField()];
       this.fields = table.fields;
       if (this.fields.length == 0) {
         this.fields.push(newField());
@@ -179,7 +184,6 @@ export default {
       swapArray(this.fields, inx, inx + 1);
     },
     setTagStatus(tag, enabled) {
-      this.tagStatus = { [tag.name]: enabled, ...this.tagStatus };
       if (enabled) {
         switch (tag.type) {
           case TagType.FLAG:

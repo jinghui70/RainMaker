@@ -72,6 +72,7 @@ export default {
       const model = new ModelObject();
       this.setWorld(model);
       this.setFileName(null);
+      document.title = "Rainbow Data Model Designer";
     },
     open() {
       this.askSaveIfNeed();
@@ -87,6 +88,7 @@ export default {
         world.loadFromFile(JSON.parse(content));
         this.setFileName(fileName);
         this.setWorld(world);
+        document.title = fileName;
       } catch (e) {
         this.$message({
           showClose: true,
@@ -112,6 +114,10 @@ export default {
       const obj = this.world.toFileObject();
       fs.writeFileSync(file, JSON.stringify(obj, null, 4));
       this.setChanged(false);
+      this.$message({
+        message: "文件保存成功",
+        type: "success"
+      });
     }
   }
 };

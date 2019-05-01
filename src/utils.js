@@ -57,9 +57,9 @@ export function newTable(model) {
     code: "",
     label: "",
     comment: "",
-    fields: [],
     linkFields: [],
     indexes: [],
+    fields: [newField()],
     tags: newTableTag(model)
   };
 }
@@ -70,6 +70,9 @@ export function newField() {
     name: "new",
     code: "NEW",
     label: "新属性",
+    type: "VARCHAR",
+    length: 22,
+    precision: 0,
     comment: "",
     tags: {}
   };
