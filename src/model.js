@@ -4,13 +4,13 @@ import _ from "lodash";
 export class ModelObject {
   constructor() {
     this.root = {
-      label: "新文件",
+      label: "未命名",
       type: ElementType.MODEL,
       children: []
     };
     this.model = {
-      label: "新文件",
-      name: "NEW",
+      label: "未命名",
+      name: "Unkown",
       tableTags: [],
       fieldTags: []
     };
@@ -178,5 +178,15 @@ export class ModelObject {
     result.targetTable = targetTable ? targetTable.name : "";
     if (targetTable) result.targetFields = link.targetFields.map(id => this.fieldId2FieldName(targetTable, id));
     return result;
+  }
+
+  check() {
+    // 检查link型的tag指向的表与字段还存在吗
+    // 检查link型tag字段与link字段是否重复
+    // 检查link字段是否重复
+    // 检查表名、数据库名是否重复
+    // 检查表是否有错误的字段
+    // 检查表FLAG标签字段完整性
+    // 检查INDEX名唯一性
   }
 }

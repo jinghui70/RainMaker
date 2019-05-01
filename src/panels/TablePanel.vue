@@ -7,6 +7,9 @@
         @action-click="actionClick"
         title-action="editTable"
       />
+      <div class="table-panel-tag">
+        <el-tag v-for="tag in Object.keys(table.tags)" size="mini" :key="tag">{{ tag }}</el-tag>
+      </div>
       <el-table
         :data="table.fields || []"
         height="250"
@@ -213,7 +216,9 @@ export default {
   flex-direction: column;
   height: 100%;
   width: 100%;
-
+  .table-panel-tag {
+    display: flex;
+  }
   .table-panel-fields {
     flex: 1;
     overflow: scroll;

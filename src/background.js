@@ -1,6 +1,6 @@
 "use strict";
 
-import { app, protocol, BrowserWindow, Menu } from "electron";
+import { app, protocol, BrowserWindow, Menu, ipcMain } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import { appMenuTemplate } from "./menu.js";
 const isDevelopment = process.env.NODE_ENV !== "production";
@@ -8,7 +8,7 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
-
+let safeClose = false;
 // Standard scheme must be registered before the app is ready
 protocol.registerStandardSchemes(["app"], { secure: true });
 function createWindow() {
@@ -30,12 +30,19 @@ function createWindow() {
     win.loadURL("app://./index.html");
   }
 
-  win.on("closed", () => {
-    win.webContents.send("action", "close");
-    win = null;
+  win.on("close", e => {
+    if (!safeClose) {
+      e.preventDefault();
+      win.webContents.send("action", "close");
+    }
   });
+  win.on("closed", () => (win = null));
 }
 
+ipcMain.on("doClose", () => {
+  safeClose = true;
+  win.close();
+});
 // Quit when all windows are closed.
 app.on("window-all-closed", () => {
   // On macOS it is common for applications and their menu bar

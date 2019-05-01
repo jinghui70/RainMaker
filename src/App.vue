@@ -63,7 +63,7 @@ export default {
       const response = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
         message: "文件已被改变，需要保存吗？",
         type: "question",
-        buttons: ["要", "不存"]
+        buttons: ["保存", "不保存"]
       });
       if (response == 0) this.save(); //点击Yes按钮后保存当前文档
     },
@@ -121,6 +121,7 @@ export default {
     },
     close() {
       this.askSaveIfNeed();
+      ipcRenderer.send("doClose");
     }
   }
 };
