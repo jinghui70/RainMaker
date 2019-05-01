@@ -61,6 +61,7 @@ export default {
     },
     editUnit() {
       if (this.unit.type == ElementType.UNIT) this.app.$refs.unitDialog.editUnit(this.unit);
+      else this.app.$refs.modelDialog.open();
     },
     newTable() {
       this.app.$refs.tableDialog.newTable(this.unit);

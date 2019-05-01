@@ -154,9 +154,6 @@ export default {
     fieldChange(row) {
       this.field = row;
     },
-    selectionChange(selection) {
-      this.selection = selection;
-    },
     addField() {
       let field = newField();
       this.fields.push(field);

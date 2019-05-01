@@ -7,6 +7,7 @@
     </div>
     <table-dialog ref="tableDialog" />
     <unit-dialog ref="unitDialog" />
+    <model-dialog ref="modelDialog" />
   </div>
 </template>
 
@@ -20,11 +21,12 @@ import UnitPanel from "@/panels/UnitPanel.vue";
 import TablePanel from "@/panels/TablePanel.vue";
 import TableDialog from "@/dialogs/TableDialog.vue";
 import UnitDialog from "@/dialogs/UnitDialog.vue";
+import ModelDialog from "@/dialogs/ModelDialog.vue";
 import { mapState, mapMutations } from "vuex";
 
 export default {
   name: "app",
-  components: { ItemTreePanel, UnitPanel, TablePanel, TableDialog, UnitDialog },
+  components: { ItemTreePanel, UnitPanel, TablePanel, TableDialog, UnitDialog, ModelDialog },
   data() {
     return {
       selectObject: null

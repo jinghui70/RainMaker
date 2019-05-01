@@ -18,6 +18,7 @@
         draggable
         :allow-drag="allowDrag"
         :allow-drop="allowDrop"
+        @node-drop="nodeDrop"
         :render-content="renderNode"
         highlight-current
         @current-change="nodeChange"
@@ -87,11 +88,31 @@ export default {
       let data = node.data;
       return data.type != ElementType.MODEL;
     },
-    allowDrop(draggingNode, dropNode) {
-      //, type) {
+    allowDrop(draggingNode, dropNode, type) {
       let dragData = draggingNode.data;
       let dropData = dropNode.data;
-      return dragData != dropData;
+      if (dragData.type == ElementType.TABLE) {
+        if (dropData.type == ElementType.TABLE) return type != "inner";
+        else return type == "inner";
+      } else {
+        return dropData.type != ElementType.TABLE;
+      }
+    },
+    nodeDrop(dragNode, dropNode, type, e) {
+      let dragData = dragNode.data;
+      let dropData = dropNode.data;
+      if (dragData.type == ElementType.TABLE) {
+        if (type == "inner") {
+          const firstUnit = dropData.children.find(c => c.type == ElementType.UNIT);
+          if (firstUnit) {
+            this.$refs.tree.remove(dragData);
+            this.$refs.tree.insertBefore(dragData, firstUnit);
+          }
+          dragData.unit = dropData;
+        }
+      }
+      this.$refs.tree.setCurrentKey(dragData.id);
+      this.$emit("input", dragData);
     },
     nodeChange(data) {
       this.$emit("input", data);
