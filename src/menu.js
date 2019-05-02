@@ -1,49 +1,23 @@
+const click = function(item, window) {
+  if (window) {
+    window.webContents.send("action", item.action);
+  }
+};
+
 export var appMenuTemplate = [
   {
-    label: "File",
+    label: "文件",
     submenu: [
-      {
-        label: "新建",
-        accelerator: "CmdOrCtrl+N",
-        click(item, window) {
-          if (window) {
-            window.webContents.send("action", "newFile");
-          }
-        }
-      },
-      {
-        label: "打开文件...",
-        accelerator: "CmdOrCtrl+O",
-        click(item, window) {
-          if (window) {
-            window.webContents.send("action", "open");
-          }
-        }
-      },
-      {
-        label: "保存",
-        accelerator: "CmdOrCtrl+S",
-        click(item, window) {
-          if (window) {
-            window.webContents.send("action", "save");
-          }
-        }
-      },
-      {
-        label: "另存为...",
-        accelerator: "CmdOrCtrl+A",
-        click(item, window) {
-          if (window) {
-            window.webContents.send("action", "saveAs");
-          }
-        }
-      },
+      { label: "新建", accelerator: "CmdOrCtrl+N", action: "newFile", click },
+      { label: "打开文件...", accelerator: "CmdOrCtrl+O", action: "open", click },
+      { label: "保存", accelerator: "CmdOrCtrl+S", action: "save", click },
+      { label: "另存为...", accelerator: "CmdOrCtrl+A", action: "saveAs", click },
       { type: "separator" },
       { label: "退出", role: "quit" }
     ]
   },
   {
-    label: "Edit",
+    label: "编辑",
     submenu: [
       { role: "undo" },
       { role: "redo" },
@@ -57,7 +31,7 @@ export var appMenuTemplate = [
     ]
   },
   {
-    label: "View",
+    label: "显示",
     submenu: [
       { role: "reload" },
       { role: "forcereload" },
@@ -72,13 +46,6 @@ export var appMenuTemplate = [
   },
   {
     role: "help",
-    submenu: [
-      {
-        label: "Home Page",
-        click() {
-          //require("electron").shell.openExternal("http://");
-        }
-      }
-    ]
+    submenu: [{ label: "关于", action: "about", click }]
   }
 ];

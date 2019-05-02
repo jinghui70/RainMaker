@@ -122,6 +122,13 @@ export default {
     close() {
       this.askSaveIfNeed();
       ipcRenderer.send("doClose");
+    },
+    about() {
+      remote.dialog.showMessageBox({
+        title: "RainMaker",
+        message: "Rainbow Data Model Designer",
+        detail: `Version: 1.0.0\nAuthor: jinghui70\nGithub: https://github.com/jinghui70/RainMaker`
+      });
     }
   }
 };
