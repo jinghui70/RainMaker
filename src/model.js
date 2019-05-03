@@ -132,7 +132,7 @@ export class ModelObject {
     });
     let result = { label: unit.label };
     if (tables.length > 0) result.tables = tables;
-    if (units.length > 0) result.units = tables;
+    if (units.length > 0) result.units = units;
     return result;
   }
 

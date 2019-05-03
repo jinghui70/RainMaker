@@ -112,7 +112,7 @@ export default {
     },
     doSave(file) {
       const obj = this.world.toFileObject();
-      fs.writeFileSync(file, JSON.stringify(obj, null, 4));
+      fs.writeFileSync(file, JSON.stringify(obj, null, "\t"));
       this.setChanged(false);
       this.$message({
         message: "文件保存成功",
