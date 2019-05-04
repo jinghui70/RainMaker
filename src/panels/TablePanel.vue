@@ -6,6 +6,7 @@
         :actions="tableActions"
         @action-click="actionClick"
         title-action="editTable"
+        goBack
       />
       <div class="table-panel-tag">
         <el-tag v-for="tag in Object.keys(table.tags)" size="mini" :key="tag">{{ tag }}</el-tag>
@@ -205,6 +206,9 @@ export default {
         if (inx >= 0) this.table.indexes.splice(inx, 1);
       });
       this.setChanged(true);
+    },
+    goBack() {
+      this.app.selectObject = this.table.unit;
     }
   }
 };

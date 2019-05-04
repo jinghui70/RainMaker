@@ -109,6 +109,8 @@ export default {
           }
           dragData.unit = dropData;
         }
+      } else if (type == "inner") {
+        dragData.parent = dropData;
       }
       this.setChanged(true);
       this.$refs.tree.setCurrentKey(dragData.id);

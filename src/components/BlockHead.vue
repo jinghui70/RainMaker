@@ -1,5 +1,13 @@
 <template>
   <div class="block-head">
+    <el-button
+      v-if="goBack"
+      icon="el-icon-d-arrow-left"
+      type="info"
+      @click="actionClick('goBack')"
+      circle
+      size="mini"
+    />
     <span class="block-head__title" :class="{ action: !!titleAction }" @click="actionClick(titleAction)">
       {{ title }}
     </span>
@@ -26,7 +34,11 @@ export default {
   props: {
     title: String,
     titleAction: String,
-    actions: Array
+    actions: Array,
+    goBack: {
+      type: Boolean,
+      defalult: false
+    }
   },
   methods: {
     actionClick: function(e) {
