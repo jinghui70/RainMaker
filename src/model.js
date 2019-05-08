@@ -164,7 +164,7 @@ export class ModelObject {
   }
 
   saveLinkField(table, link) {
-    let result = { name: link.name, label: link.label };
+    let result = { name: link.name, label: link.label, many: link.many };
     if (!_.isEmpty(link.fields)) result.fields = link.fields.map(id => this.fieldId2FieldName(table, id));
     if (link.interTable) {
       let interTable = this.tables[link.interTable];
