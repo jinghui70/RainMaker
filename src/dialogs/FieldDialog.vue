@@ -14,7 +14,6 @@
         highlight-current-row
         cell-class-name="nopadding"
         header-cell-class-name="header-cell-class"
-        :current-row-key="field.id"
         @current-change="fieldChange"
         ref="fieldList"
       >
@@ -189,6 +188,10 @@ export default {
             this.$set(this.field.tags, tag.name, "");
         }
       } else this.field.tags = this._.omit(this.field.tags, [tag.name]);
+    },
+    keyChange(value) {
+      this.field.key = value;
+      if (value) this.field.mandatory = true;
     }
   }
 };

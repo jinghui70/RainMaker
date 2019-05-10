@@ -2,8 +2,12 @@
   <div id="app">
     <item-tree-panel v-model="selectObject" />
     <div class="panel">
-      <unit-panel v-if="selectUnit" :unit="selectUnit" />
-      <table-panel v-if="selectTable" :table="selectTable" />
+      <template v-if="selectUnit">
+        <unit-panel :unit="selectUnit" />
+      </template>
+      <template v-else-if="selectTable != null">
+        <table-panel :table="selectTable" />
+      </template>
     </div>
     <table-dialog ref="tableDialog" />
     <unit-dialog ref="unitDialog" />
@@ -23,6 +27,8 @@ import TableDialog from "@/dialogs/TableDialog.vue";
 import UnitDialog from "@/dialogs/UnitDialog.vue";
 import ModelDialog from "@/dialogs/ModelDialog.vue";
 import { mapState, mapMutations } from "vuex";
+import pkg from "../package.json";
+const version = pkg.version;
 
 export default {
   name: "app",
@@ -84,18 +90,38 @@ export default {
       const fileName = files[0];
       try {
         const content = fs.readFileSync(fileName, "utf8");
+        const file = JSON.parse(content);
+        if (this.checkVersion(file.version)) {
+          this.$alert(`程序版本${version}低于文件版本${file.version}，请升级!`, "打开文件失败", {
+            confirmButtonText: "确定"
+          });
+        }
         const world = new ModelObject();
-        world.loadFromFile(JSON.parse(content));
+        world.loadFromFile(file);
         this.setFileName(fileName);
         this.setWorld(world);
         document.title = fileName;
       } catch (e) {
-        this.$message({
-          showClose: true,
-          message: "文件格式错误" + e,
-          type: "error"
+        this.$alert(e, "文件格式错误", {
+          confirmButtonText: "确定"
         });
       }
+    },
+    checkVersion(fv) {
+      if (!fv) return false;
+      if (fv == version) return false;
+      var arr1 = fv.split("."),
+        arr2 = version.split(".");
+      var minLength = Math.min(arr1.length, arr2.length),
+        position = 0,
+        diff = 0;
+      //依次比较版本号每一位大小，当对比得出结果后跳出循环（后文有简单介绍）
+      while (position < minLength && (diff = parseInt(arr1[position]) - parseInt(arr2[position])) == 0) {
+        position++;
+      }
+      diff = diff != 0 ? diff : arr1.length - arr2.length;
+      //若curV大于reqV，则返回true
+      return diff > 0;
     },
     save() {
       if (this.fileName == null) this.saveAs();
@@ -111,7 +137,8 @@ export default {
       }
     },
     doSave(file) {
-      const obj = this.world.toFileObject();
+      let obj = this.world.toFileObject();
+      obj.version = version;
       fs.writeFileSync(file, JSON.stringify(obj, null, "\t"));
       this.setChanged(false);
       this.$message({
@@ -127,7 +154,7 @@ export default {
       remote.dialog.showMessageBox({
         title: "RainMaker",
         message: "Rainbow Data Model Designer",
-        detail: `Version: 1.0.0\nAuthor: jinghui70\nGithub: https://github.com/jinghui70/RainMaker`
+        detail: `Version: ${version}\nAuthor: jinghui70\nGithub: https://github.com/jinghui70/RainMaker`
       });
     }
   }

@@ -108,6 +108,7 @@ export default {
         this._.assign(this.oldTable, this.table);
       }
       this.setChanged(true);
+      this.table = { tags: [] };
       this.visible = false;
     },
 

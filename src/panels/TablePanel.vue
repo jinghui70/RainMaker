@@ -12,7 +12,7 @@
         <el-tag v-for="tag in Object.keys(table.tags)" size="mini" :key="tag">{{ tag }}</el-tag>
       </div>
       <el-table
-        :data="table.fields || []"
+        :data="fields"
         height="250"
         :highlight-current-row="false"
         border
@@ -128,6 +128,9 @@ export default {
   },
   computed: {
     ...mapGetters(["getTable", "getFieldsLabel"]),
+    fields() {
+      return this.table.fields || [];
+    },
     linkFields() {
       return this.table.linkFields || [];
     },

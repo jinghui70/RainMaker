@@ -97,7 +97,7 @@ export default {
         return dropData.type != ElementType.TABLE;
       }
     },
-    nodeDrop(dragNode, dropNode, type, e) {
+    nodeDrop(dragNode, dropNode, type) {
       let dragData = dragNode.data;
       let dropData = dropNode.data;
       if (dragData.type == ElementType.TABLE) {

@@ -72,7 +72,6 @@ export default {
       this.app.$refs.tableDialog.newTable(this.unit);
     },
     editTable(table) {
-      //this.app.$refs.tableDialog.editTable(table);
       this.app.selectObject = table;
     },
     delTable() {

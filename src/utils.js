@@ -40,7 +40,7 @@ export const TagType = Object.freeze({
 });
 
 const newTableTag = function(model) {
-  if (_.isEmpty(model.tableTags)) return null;
+  if (_.isEmpty(model.tableTags)) return {};
   let result = {};
   model.tableTags.forEach(tag => {
     if (tag.type == TagType.FLAG) result[tag.name] = false;
