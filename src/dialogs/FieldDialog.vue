@@ -97,7 +97,7 @@
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
-import { newField, swapArray, TagType } from "../utils";
+import { createField, swapArray, TagType } from "../utils";
 
 export default {
   name: "FieldDialog",
@@ -144,7 +144,7 @@ export default {
     ...mapMutations(["setChanged"]),
     open(table) {
       this.table = table;
-      if (!table.fields) table.fields = [newField()];
+      if (!table.fields) table.fields = [createField()];
       this.fields = table.fields;
       this.field = this.fields[0];
       this.title = `编辑属性-${table.label}`;
@@ -155,7 +155,7 @@ export default {
       else this.field = { tags: {} };
     },
     addField() {
-      let field = newField();
+      let field = createField();
       this.fields.push(field);
       this.field = field;
       this.$refs.fieldList.setCurrentRow(this.field);

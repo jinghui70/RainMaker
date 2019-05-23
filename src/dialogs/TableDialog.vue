@@ -35,7 +35,7 @@
 
 <script>
 import { mapState, mapGetters, mapMutations } from "vuex";
-import { uuid, newTable, TagType } from "../utils";
+import { uuid, createTable, TagType } from "../utils";
 
 export default {
   name: "TableDialog",
@@ -64,8 +64,14 @@ export default {
       this.unit = unit;
       this.title = "新建数据表";
       this.oldTable = null;
-      this.table = newTable(this.model);
-      this.tagStatus = {};
+      this.table = createTable(this.model);
+      let tagStatus = {};
+      if (this.tableTags) {
+        this.tableTags.forEach(tag => {
+          tagStatus[tag.name] = false;
+        });
+      }
+      this.tagStatus = tagStatus;
       this.visible = true;
     },
     editTable(table) {
@@ -103,7 +109,6 @@ export default {
           .filter(tag => tag.type == TagType.FLAG)
           .forEach(tag => {
             if (this.table.tags[tag.name]) this.addTagFields(tag);
-            else this.removeTagFields(tag);
           });
         this._.assign(this.oldTable, this.table);
       }
@@ -122,13 +127,7 @@ export default {
         this.table.fields.push(one);
       });
     },
-    removeTagFields(tag) {
-      if (this._.isEmpty(tag.fields)) return;
-      tag.fields.forEach(field => {
-        let inx = this.table.fields.findIndex(f => f.name == field.name);
-        if (inx >= 0) this.table.fields.splice(inx, 1);
-      });
-    },
+
     setTagStatus(tag, enabled) {
       if (enabled) {
         switch (tag.type) {

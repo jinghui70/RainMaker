@@ -60,6 +60,10 @@ export default {
   watch: {
     world(newValue) {
       this.selectObject = newValue.root;
+    },
+    fileName(newValue) {
+      if (this._.isEmpty(newValue)) document.title = "Rainbow Data Model Designer";
+      else document.title = newValue;
     }
   },
   methods: {
@@ -78,7 +82,6 @@ export default {
       const model = new ModelObject();
       this.setWorld(model);
       this.setFileName(null);
-      document.title = "Rainbow Data Model Designer";
     },
     open() {
       this.askSaveIfNeed();
@@ -100,7 +103,6 @@ export default {
         world.loadFromFile(file);
         this.setFileName(fileName);
         this.setWorld(world);
-        document.title = fileName;
       } catch (e) {
         this.$alert(e, "文件格式错误", {
           confirmButtonText: "确定"

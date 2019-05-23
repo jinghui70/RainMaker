@@ -39,17 +39,7 @@ export const TagType = Object.freeze({
   FIELD: "FIELD"
 });
 
-const newTableTag = function(model) {
-  if (_.isEmpty(model.tableTags)) return {};
-  let result = {};
-  model.tableTags.forEach(tag => {
-    if (tag.type == TagType.FLAG) result[tag.name] = false;
-    else result[tag.name] = null;
-  });
-  return result;
-};
-
-export function newTable(model) {
+export function createTable() {
   return {
     id: uuid(),
     type: ElementType.TABLE,
@@ -59,12 +49,12 @@ export function newTable(model) {
     comment: "",
     linkFields: [],
     indexes: [],
-    fields: [newField()],
-    tags: newTableTag(model)
+    fields: [createField()],
+    tags: {}
   };
 }
 
-export function newField() {
+export function createField() {
   return {
     id: uuid(),
     name: "new",
