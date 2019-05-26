@@ -147,8 +147,6 @@ export class ModelObject {
       type: field.type,
       comment: field.comment
     };
-    if (field.key) result.key = true;
-    if (field.mandatory) result.mandatory = true;
     switch (field.type) {
       case "NUMERIC":
         result.length = field.length;
@@ -159,6 +157,8 @@ export class ModelObject {
         result.length = field.length;
         break;
     }
+    if (field.key) result.key = true;
+    if (field.mandatory) result.mandatory = true;
     if (!_.isEmpty(field.tags)) result.tags = field.tags;
     return result;
   }
