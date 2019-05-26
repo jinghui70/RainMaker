@@ -40,7 +40,6 @@ export class ModelObject {
         if (_.isArray(table.fields))
           table.fields.forEach(f => {
             f.id = uuid();
-            if (!f.tags) f.tags = {};
           });
         if (_.isArray(table.indexes)) {
           table.indexes.forEach(i => {
@@ -63,17 +62,6 @@ export class ModelObject {
       if (_.isArray(table.linkFields)) {
         table.linkFields.forEach(linkField => {
           linkField.fields = linkField.fields.map(f => this.fieldName2Id(table, f));
-
-          if (linkField.interTable) {
-            try {
-              const interTable = this.tableName2Table(linkField.interTable);
-              linkField.interTable = interTable.id;
-              linkField.leftFields = linkField.leftFields.map(f => this.fieldName2Id(interTable, f));
-              linkField.rightFields = linkField.rightFields.map(f => this.fieldName2Id(interTable, f));
-            } catch (e) {
-              throw new Error(`读取表${table.name}link属性${linkField.name}中间表${linkField.interTable}出错:${e}`);
-            }
-          }
           try {
             const targetTable = this.tableName2Table(linkField.targetTable);
             linkField.targetTable = targetTable.id;
@@ -152,8 +140,26 @@ export class ModelObject {
   }
 
   saveField(field) {
-    let result = _.omit(field, ["id", "tags"]);
-    if (!_.isEmpty(field.tags)) result.tags = _.cloneDeep(field.tags);
+    let result = {
+      code: field.code,
+      name: field.name,
+      label: field.label,
+      type: field.type,
+      comment: field.comment
+    };
+    if (field.key) result.key = true;
+    if (field.mandatory) result.mandatory = true;
+    switch (field.type) {
+      case "NUMERIC":
+        result.length = field.length;
+        result.precision = field.precision;
+        break;
+      case "CHAR":
+      case "VARCHAR":
+        result.length = field.length;
+        break;
+    }
+    if (!_.isEmpty(field.tags)) result.tags = field.tags;
     return result;
   }
 
@@ -166,14 +172,6 @@ export class ModelObject {
   saveLinkField(table, link) {
     let result = { name: link.name, label: link.label, many: link.many };
     if (!_.isEmpty(link.fields)) result.fields = link.fields.map(id => this.fieldId2FieldName(table, id));
-    if (link.interTable) {
-      let interTable = this.tables[link.interTable];
-      result.interTable = interTable ? interTable.name : "";
-      if (interTable) {
-        result.leftFields = link.leftFields.map(id => this.fieldId2FieldName(interTable, id));
-        result.rightFields = link.rightFields.map(id => this.fieldId2FieldName(interTable, id));
-      }
-    }
     let targetTable = this.tables[link.targetTable];
     result.targetTable = targetTable ? targetTable.name : "";
     if (targetTable) result.targetFields = link.targetFields.map(id => this.fieldId2FieldName(targetTable, id));

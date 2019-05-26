@@ -63,13 +63,13 @@
             </el-select>
           </el-form-item>
         </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="12">
+        <el-col v-show="hasLength" :span="12">
           <el-form-item label="长度">
             <el-input-number v-model="field.length" :min="0" />
           </el-form-item>
         </el-col>
+      </el-row>
+      <el-row v-show="field.type == 'NUMERIC'">
         <el-col :span="12">
           <el-form-item label="精度">
             <el-input-number v-model="field.precision" :min="0" />
@@ -126,7 +126,19 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["fieldTags"])
+    ...mapGetters(["fieldTags"]),
+    hasLength() {
+      switch (this.field.type) {
+        case "CHAR":
+        case "VARCHAR":
+        case "NUMERIC":
+        case "BLOB":
+        case "CLOB":
+          return true;
+        default:
+          return false;
+      }
+    }
   },
   watch: {
     field(newValue) {
@@ -138,6 +150,9 @@ export default {
         });
       }
       this.tagStatus = tagStatus;
+    },
+    "field.key": function(newValue) {
+      if (newValue) this.field.mandatory = true;
     }
   },
   methods: {
@@ -146,13 +161,14 @@ export default {
       this.table = table;
       if (!table.fields) table.fields = [createField()];
       this.fields = table.fields;
-      this.field = this.fields[0];
       this.title = `编辑属性-${table.label}`;
       this.visible = true;
+      this.$nextTick(() => {
+        this.$refs.fieldList.setCurrentRow(this.fields[0]);
+      });
     },
     fieldChange(row) {
-      if (row) this.field = row;
-      else this.field = { tags: {} };
+      this.field = row;
     },
     addField() {
       let field = createField();

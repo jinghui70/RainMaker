@@ -23,9 +23,16 @@
       >
         <el-table-column fixed type="selection" :resizable="false" width="38" />
         <el-table-column fixed type="index" label="序号" width="50" />
-        <el-table-column label="标签" width="58">
-          <template slot-scope="scope">
-            <el-tag v-for="tag in Object.keys(scope.row.tags)" size="mini" :key="tag">{{ tag }}</el-tag>
+        <el-table-column label="标签" width="80">
+          <template v-if="scope.row.tags" slot-scope="scope">
+            <el-tag v-for="tag in Object.keys(scope.row.tags)" size="mini" :key="tag">
+              <template v-if="!_.isEmpty(scope.row.tags[tag])">
+                {{ tag }}-{{ scope.row.tags[tag] }}
+              </template>
+              <template v-else>
+                {{ tag }}
+              </template>
+            </el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="label" label="显示标题" width="160" />

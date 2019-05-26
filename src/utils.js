@@ -1,5 +1,4 @@
 import _uuid from "uuid/v1";
-import _ from "lodash";
 
 export function uuid() {
   return _uuid().substr(0, 8);
@@ -15,21 +14,6 @@ export const ElementType = Object.freeze({
   UNIT: 1,
   TABLE: 2
 });
-
-export const DataType = [
-  "SMALLINT",
-  "INT",
-  "LONG",
-  "DOUBLE",
-  "NUMERIC",
-  "DATE",
-  "TIME",
-  "TIMESTAMP",
-  "CHAR",
-  "VARCHAR",
-  "CLOB",
-  "BLOB"
-];
 
 export const TagType = Object.freeze({
   FLAG: "FLAG",
@@ -62,7 +46,6 @@ export function createField() {
     label: "新属性",
     type: "VARCHAR",
     length: 0,
-    precision: 0,
     comment: "",
     tags: {}
   };
@@ -76,9 +59,6 @@ export function newLink(fields) {
     label,
     fields: [...fields],
     many: false,
-    interTable: null,
-    leftFields: [],
-    rightFields: [],
     targetTable: null,
     targetFields: []
   };
