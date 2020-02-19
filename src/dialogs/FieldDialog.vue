@@ -79,9 +79,9 @@
       <el-row>
         <template v-for="tag in fieldTags">
           <el-col :span="12" :key="tag.name">
-            <el-form-item :label="tag.name" :class="{ ['extra-input']: tag.type != 'FLAG' && tagStatus[tag.name] }">
+            <el-form-item :label="tag.name" :class="{ ['extra-input']: tag.type != 'NONE' && tagStatus[tag.name] }">
               <el-switch v-model="tagStatus[tag.name]" @input="e => setTagStatus(tag, e)" />
-              <template v-if="tag.type == 'STRING'">
+              <template v-if="tag.type != 'NONE'">
                 <el-input v-if="tagStatus[tag.name]" v-model="field.tags[tag.name]" />
               </template>
             </el-form-item>
@@ -97,7 +97,7 @@
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
-import { createField, swapArray, TagType } from "../utils";
+import { createField, swapArray } from "../utils";
 
 export default {
   name: "FieldDialog",
@@ -196,14 +196,10 @@ export default {
     },
     setTagStatus(tag, enabled) {
       if (enabled) {
-        switch (tag.type) {
-          case TagType.FLAG:
-            this.$set(this.field.tags, tag.name, true);
-            break;
-          default:
-            this.$set(this.field.tags, tag.name, "");
-        }
-      } else this.field.tags = this._.omit(this.field.tags, [tag.name]);
+        this.$set(this.field.tags, tag.name, tag.defaultParam || "");
+      } else {
+        this.field.tags = this._.omit(this.field.tags, [tag.name]);
+      }
     },
     keyChange(value) {
       this.field.key = value;

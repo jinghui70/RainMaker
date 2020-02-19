@@ -15,14 +15,6 @@ export const ElementType = Object.freeze({
   TABLE: 2
 });
 
-export const TagType = Object.freeze({
-  FLAG: "FLAG",
-  STRING: "STRING",
-  LIST: "LIST",
-  TABLE: "TABLE",
-  FIELD: "FIELD"
-});
-
 export function createTable() {
   return {
     id: uuid(),

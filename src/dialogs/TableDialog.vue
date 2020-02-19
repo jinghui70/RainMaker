@@ -13,9 +13,9 @@
       <el-row>
         <template v-for="tag in tableTags">
           <el-col :span="12" :key="tag.name">
-            <el-form-item :label="tag.name" :class="{ ['extra-input']: tag.type != 'FLAG' && tagStatus[tag.name] }">
+            <el-form-item :label="tag.name" :class="{ ['extra-input']: tag.type != 'NONE' && tagStatus[tag.name] }">
               <el-switch v-model="tagStatus[tag.name]" @input="e => setTagStatus(tag, e)" />
-              <template v-if="tag.type == 'STRING'">
+              <template v-if="tag.type != 'NONE'">
                 <el-input v-if="tagStatus[tag.name]" v-model="table.tags[tag.name]" />
               </template>
             </el-form-item>
@@ -35,7 +35,7 @@
 
 <script>
 import { mapState, mapGetters, mapMutations } from "vuex";
-import { uuid, createTable, TagType } from "../utils";
+import { createTable } from "../utils";
 
 export default {
   name: "TableDialog",
@@ -95,21 +95,9 @@ export default {
     },
     doSave() {
       if (this.oldTable == null) {
-        if (this.table.tags) {
-          this.tableTags
-            .filter(tag => tag.type == TagType.FLAG)
-            .forEach(tag => {
-              if (this.table.tags[tag.name]) this.addTagFields(tag);
-            });
-        }
         this.unit.children.unshift(this.table);
         this.world.tables[this.table.id] = this.table;
       } else {
-        this.tableTags
-          .filter(tag => tag.type == TagType.FLAG)
-          .forEach(tag => {
-            if (this.table.tags[tag.name]) this.addTagFields(tag);
-          });
         this._.assign(this.oldTable, this.table);
       }
       this.setChanged(true);
@@ -117,27 +105,12 @@ export default {
       this.visible = false;
     },
 
-    addTagFields(tag) {
-      if (this._.isEmpty(tag.fields)) return;
-      tag.fields.forEach(field => {
-        let one = this.table.fields.find(f => f.name == field.name);
-        if (one) return;
-        one = this._.clone(field);
-        one.id = uuid();
-        this.table.fields.push(one);
-      });
-    },
-
     setTagStatus(tag, enabled) {
       if (enabled) {
-        switch (tag.type) {
-          case TagType.FLAG:
-            this.$set(this.table.tags, tag.name, true);
-            break;
-          default:
-            this.$set(this.table.tags, tag.name, "");
-        }
-      } else this.table.tags = this._.omit(this.table.tags, [tag.name]);
+        this.$set(this.table.tags, tag.name, tag.defaultParam || "");
+      } else {
+        this.table.tags = this._.omit(this.table.tags, [tag.name]);
+      }
     }
   }
 };
