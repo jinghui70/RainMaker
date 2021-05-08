@@ -14,7 +14,7 @@
   "main": "background.js",
   "dependencies": {
     "element-ui": "^2.8.2",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.21",
     "uuid": "^3.3.2",
     "vue": "^2.6.10",
     "vue-i18n": "^8.10.0",
